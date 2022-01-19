@@ -1,12 +1,18 @@
 import plotly.express as px
+import numpy as np
+
+def readFile(fileName):
+        fileObj = open(fileName, "r") #opens the file in read mode
+        words = fileObj.read().splitlines() #puts the file into an array
+        fileObj.close()
+        return words
  
- 
-# Creating the Figure instance
+filename = 'LTG_cs_per_min.txt'
+
+lines = readFile(filename)
+xsize = [i for i in range(0, len(lines))]
+
 df = px.data.tips()
-fig = px.scatter(df, x=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], y=[1, 2, 3, 5, 1, 6, 8, 4, 2, 11], trendline="ols")
+fig = px.scatter(df, x=xsize, y=np.array(lines).astype(np.float64), trendline="ols")
 
-with open('LTG_cs_per_min.txt') as f:
-    lines = f.readlines()
-
-# showing the plot
 fig.show()

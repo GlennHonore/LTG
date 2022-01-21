@@ -33,12 +33,18 @@ fig.add_trace(
     go.Scatter(x=df.index, y=df.CS_per_min, name='CS per min' ),
     row=1, col=1
 )
-fig.add_traces(go.Scatter(x=x_range, y=y_range, name='Regression Fit'))
+fig.add_trace(
+    go.Scatter(x=x_range, y=y_range, name='Regression Fit'), 
+    row=1, col=1
+)
 
 fig.add_trace(
     go.Scatter(x=df.index, y=df.Volume, name='Volume'),
     row=1, col=2
 )
-fig.add_traces(go.Scatter(x=x_range, y=y_range, name='Regression Fit'))
+fig.add_trace(
+    go.Scatter(x=x_range, y=y_range, name='Regression Fit'),
+    row=1, col=2
+)
 
 fig.show()

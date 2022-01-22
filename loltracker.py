@@ -10,30 +10,36 @@ def readFile(fileName):
     fileObj.close()
     return coords
  
-def calculateRegression(xsize, index):
+def calculateRegression(xsize, index, lines):
     X = np.array(xsize).reshape(-1,1)
     model.fit(X, np.array(lines[index]).astype(np.float64))
     x_range = np.linspace(X.min(), X.max(), 100)
     y_range = model.predict(x_range.reshape(-1, 1))
     return x_range, y_range
 
+def setupData():
 
-filename = ['LTG_damage_per_gold.txt', 'LTG_cs_per_min.txt']
+    df = pd.DataFrame(data={
+        'Damage_per_gold':np.array(lines[0]).astype(np.float64), 
+        'CS_per_min':np.array(lines[1]).astype(np.float64)}, 
+    index=xsize)
+    return df
+
+def linesValues():
+    filename = ['LTG_damage_per_gold.txt', 'LTG_cs_per_min.txt']
+    lines = []
+
+    for i in range(0, len(filename)):
+        lines.insert(i, readFile(filename[i]))
+    return lines
+
 
 model = LinearRegression()
-lines = []
-
-for i in range(0, len(filename)):
-    lines.insert(i, readFile(filename[i]))
-    
+lines = linesValues()
 xsize = [j for j in range(0, len(lines[0]))]
+df = setupData()
 
-df = pd.DataFrame(data={
-    'Damage_per_gold':np.array(lines[0]).astype(np.float64), 
-    'CS_per_min':np.array(lines[1]).astype(np.float64)}, 
-    index=xsize)
-
-x_range, y_range = calculateRegression(xsize, 0)
+x_range, y_range = calculateRegression(xsize, 0, lines)
 
 fig = make_subplots(rows=1, cols=2)
 fig.add_trace(
@@ -45,7 +51,7 @@ fig.add_trace(
     row=1, col=1
 )
 
-x_range, y_range = calculateRegression(xsize, 1)
+x_range, y_range = calculateRegression(xsize, 1, lines)
 
 fig.add_trace(
     go.Scatter(x=df.index, y=df.CS_per_min, name='CS per min' ),

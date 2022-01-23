@@ -4,8 +4,9 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
+filename = ['LTG_damage_per_gold.txt', 'LTG_early_gold_adv.txt', 'LTG_early_cs_adv.txt', 'LTG_cs_per_min.txt']
+
 def addGameMenu():
-    filename = ['LTG_damage_per_gold.txt', 'LTG_early_gold_adv.txt', 'LTG_early_cs_adv.txt', 'LTG_cs_per_min.txt']
     dataCoords = []
     dataCoords.append(input('Damages per gold : '))
     dataCoords.append(input('Early gold advantage : '))
@@ -17,12 +18,14 @@ def addGameMenu():
         f.write("\n"+dataCoords[i])
         f.close()
 
-
-def readFile(fileName):
-    fileObj = open(fileName, "r")
-    coords = fileObj.read().splitlines()
-    fileObj.close()
-    return coords
+def readFile():
+    lines = []
+    for i in range(0, len(filename)):
+        fileObj = open(filename[i], "r")
+        coords = fileObj.read().splitlines()
+        fileObj.close()
+        lines.insert(i, coords)
+    return lines
  
 def calculateRegression(xsize, index, lines, model):
     X = np.array(xsize).reshape(-1,1)
@@ -32,7 +35,6 @@ def calculateRegression(xsize, index, lines, model):
     return x_range, y_range
 
 def setupData(lines, xsize):
-
     df = pd.DataFrame(data={
         'Damage_per_gold':np.array(lines[0]).astype(np.float64), 
         'Early_gold_adv':np.array(lines[1]).astype(np.float64),
@@ -41,17 +43,9 @@ def setupData(lines, xsize):
     index=xsize)
     return df
 
-def linesValues():
-    filename = ['LTG_damage_per_gold.txt', 'LTG_early_gold_adv.txt', 'LTG_early_cs_adv.txt', 'LTG_cs_per_min.txt']
-    lines = []
-
-    for i in range(0, len(filename)):
-        lines.insert(i, readFile(filename[i]))
-    return lines
-
 def makeGraphes():
     model = LinearRegression()
-    lines = linesValues()
+    lines = readFile()
     xsize = [j for j in range(0, len(lines[0]))]
     df = setupData(lines, xsize)
     fig = make_subplots(rows=2, cols=3)
